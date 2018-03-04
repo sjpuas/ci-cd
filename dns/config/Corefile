@@ -1,0 +1,5 @@
+.:53 {
+    file /coredns-config/example.com example.com
+    proxy . 8.8.8.8:53
+    log
+}

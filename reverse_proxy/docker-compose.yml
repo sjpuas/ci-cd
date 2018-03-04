@@ -1,0 +1,34 @@
+version: '2.1'
+
+services:
+
+  reserve_proxy:
+    image: traefik:latest
+    restart: always
+    command: >
+      --web 
+      --docker 
+      --api
+      --docker.domain=example.com 
+      --docker.watch
+      --accesslogsfile=/dev/stdout 
+      --logLevel=DEBUG
+      --entryPoints='Name:http Address::80'
+      --entryPoints='Name:https Address::443 TLS:/certs/server.crt,/certs/server.key'
+      --defaultentrypoints="http,https" 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+      - ./certs:/certs
+    ports:
+      - "80:80" 
+      - "443:443" 
+    networks: 
+      - proxy  
+    labels:
+      - "traefik.backend=traefik-dashboard"      
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:traefik.example.com"
+
+networks: 
+  proxy:  
